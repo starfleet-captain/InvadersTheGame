@@ -42,6 +42,7 @@ def main():
     defender = Defender(game_canvas, game_data, shoot)
     invaders = Invaders(game_canvas, shoot, 1, 3)
 
+    # TODO: Change to manage_invaders() with number of current invaders = 1
     invaders.locate_invader()
 
     while 1:

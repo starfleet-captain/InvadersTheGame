@@ -9,7 +9,7 @@ class Invaders:
         self.shoot = shoot
         self.divider = divider
         self.divider_cnt = 0
-        self.invaders = list()
+        self.invaders_pictures = list()
         self.number_of_types = number_of_types
         self.score = 0
 
@@ -21,7 +21,7 @@ class Invaders:
 
         for item in item_list:
             raw_image = Image.open("./static/" + item)
-            self.invaders.append(ImageTk.PhotoImage(raw_image))
+            self.invaders_pictures.append(ImageTk.PhotoImage(raw_image))
 
     def locate_invader(self):
         invader = self.canvas.find_withtag("invader")
@@ -29,15 +29,18 @@ class Invaders:
         if len(invader) > 0:
             self.canvas.delete(invader[0])
 
-        new_invader = random.randint(0, self.number_of_types-1)
-        print(new_invader)
+        new_invader_type = random.randint(0, self.number_of_types-1)
+        print(new_invader_type)
 
-        self.canvas.create_image(100, 100, anchor=NW, image=self.invaders[new_invader], tag="invader")
+        self.canvas.create_image(100, 100, anchor=NW, image=self.invaders_pictures[new_invader_type], tag="invader")
 
     def create_graphics(self):
         pass
 
-    def manage_invaders(self):
+    def manage_invaders(self, number_of_invaders=1):
+        pass
+
+    def hit_invader(self):
         pass
 
     def draw(self):
