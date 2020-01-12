@@ -43,14 +43,15 @@ def main():
     invaders = Invaders(game_canvas, shoot, 1, 3)
 
     # TODO: Change to manage_invaders() with number of current invaders = 1
-    invaders.locate_invader()
+    invaders.set_invaders(number_of_invaders=5)
+    game_canvas.create_text(40, 590, text="SCORE: 0", font="Arial, 11", fill="gray", tag="score")
 
     while 1:
         game_app.update_idletasks()
         game_app.update()
         defender.draw()
         shoot.draw()
-        invaders.manage_invaders()
+        invaders.draw()
         time.sleep(0.02)
 
 

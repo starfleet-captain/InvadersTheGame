@@ -4,6 +4,12 @@ from PIL import ImageTk, Image
 
 class Defender:
     def __init__(self, canvas, game_data, shoot):
+        """
+
+        :param canvas:
+        :param game_data:
+        :param shoot:
+        """
         self.canvas = canvas
         self.game_data = game_data
         self.shoot = shoot
@@ -22,6 +28,10 @@ class Defender:
         self.create_graphics()
 
     def load_graphics(self):
+        """
+
+        :return:
+        """
         try:
             raw_image = Image.open("./static/defender_1.png")
             self.defender = ImageTk.PhotoImage(raw_image)
@@ -30,11 +40,19 @@ class Defender:
             exit(-1)
 
     def create_graphics(self):
+        """
+
+        :return:
+        """
         self.id = self.canvas.create_image(self.game_data.get_window_size()['WIDTH']/2 - 15,
                                            self.game_data.get_window_size()['HEIGHT']-50,
                                            image=self.defender, anchor=NW, tag='defender')
 
     def draw(self):
+        """
+
+        :return:
+        """
         pos = self.canvas.coords(self.id)
 
         # Movement logic.
@@ -50,14 +68,36 @@ class Defender:
         #self.x_move = 0
 
     def turn_left(self, event, step):
+        """
+
+        :param event:
+        :param step:
+        :return:
+        """
         self.x_move = step
 
     def turn_right(self, event, step):
+        """
+
+        :param event:
+        :param step:
+        :return:
+        """
         self.x_move = step
 
     def stop_defenter(self, event):
+        """
+
+        :param event:
+        :return:
+        """
         self.x_move = 0
 
     def shoot_event(self, event):
+        """
+
+        :param event:
+        :return:
+        """
         coords = self.canvas.coords(self.id)
         self.shoot.trigger_shoot((coords[0]+15, coords[1]))
