@@ -23,6 +23,12 @@ class GameStuff:
     def get_window_size(self):
         return self.window_size
 
+    def update_score(self, canvas, score, level):
+        score_label = canvas.find_withtag("score")
+        canvas.delete(score_label)
+        canvas.create_text(5, 580, text="SCORE: {}, LEVEL: {}".format(score, level), font="Arial, 11", fill="gray",
+                           tag="score", anchor=NW)
+
 
 def main():
     game_data = GameStuff()
@@ -42,16 +48,15 @@ def main():
     defender = Defender(game_canvas, game_data, shoot)
     invaders = Invaders(game_canvas, shoot, 1, 3)
 
-    # TODO: Change to manage_invaders() with number of current invaders = 1
     invaders.set_invaders(number_of_invaders=5)
-    game_canvas.create_text(40, 590, text="SCORE: 0", font="Arial, 11", fill="gray", tag="score")
 
     while 1:
         game_app.update_idletasks()
         game_app.update()
         defender.draw()
         shoot.draw()
-        invaders.draw()
+        invaders.manage_invaders()
+        game_data.update_score(game_canvas, invaders.get_score(), invaders.get_level())
         time.sleep(0.02)
 
 

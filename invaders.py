@@ -17,11 +17,27 @@ class Invaders:
         self.divider = divider
         self.divider_cnt = 0
         self.invaders_pictures = list()
+        self.explosion_picture = None
         self.number_of_types = number_of_types
         self.number_of_invaders = None
         self.score = 0
+        self.level = 0
 
         self.load_graphics()
+
+    def get_score(self):
+        """
+
+        :return:
+        """
+        return self.score
+
+    def get_level(self):
+        """
+
+        :return:
+        """
+        return self.level
 
     def load_graphics(self):
         """
@@ -34,6 +50,9 @@ class Invaders:
         for item in item_list:
             raw_image = Image.open("./static/" + item)
             self.invaders_pictures.append(ImageTk.PhotoImage(raw_image))
+
+        raw_image = Image.open("./static/explosion.png")
+        self.explosion_picture = ImageTk.PhotoImage(raw_image)
 
     def locate_invader(self):
         """
@@ -61,7 +80,17 @@ class Invaders:
                 print("Wylosowano na innym obcym!")
                 item_collision = True
 
-    def move_invaders(self):
+    def move_invaders_down(self):
+        """
+
+        :return:
+        """
+        invader_items = self.canvas.find_withtag("invader")
+
+        for item_i in invader_items:
+            self.canvas.move(item_i, 0, 1)
+
+    def move_invaders_random(self):
         """
 
         :return:
@@ -87,7 +116,25 @@ class Invaders:
         :param level:
         :return:
         """
-        pass
+        self.divider_cnt += 1
+
+        # TODO: moving of invaders - depending on level
+        # TODO: manage divider
+        current_draw = self.draw(self.move_invaders_down)
+        current_draw()
+
+        if self.divider_cnt % self.divider == 0:
+            self.divider_cnt = 0
+
+    def clear_explosion(self):
+        """
+
+        :return:
+        """
+        explosion_items = self.canvas.find_withtag("explosion")
+
+        for item_e in explosion_items:
+            self.canvas.delete(item_e)
 
     def hit_invader(self):
         """
@@ -104,14 +151,23 @@ class Invaders:
             for overlap in elements_overlap:
                 for item_i in invader_items:
                     if item_i == overlap:
+                        invader_x0, invader_y0, invader_x1, invader_y1 = self.canvas.bbox(item_i)
                         self.canvas.delete(item_i)
                         self.canvas.delete(item_b)
+                        self.score += 1
 
-    def draw(self):
+                        self.canvas.create_image(invader_x0, invader_y0, anchor=NW, image=self.explosion_picture,
+                                                 tag="explosion")
+
+    def draw(self, moving_method):
         """
 
         :return:
         """
+        self.clear_explosion()
         self.hit_invader()
-        # TODO: move_invaders()
-        pass
+
+        def wrap_funct():
+            moving_method()
+
+        return wrap_funct
