@@ -4,7 +4,7 @@ import random
 
 
 class Invaders:
-    def __init__(self, canvas, shoot, divider, number_of_types):
+    def __init__(self, canvas, game_data, shoot, divider, number_of_types):
         """
 
         :param canvas:
@@ -13,6 +13,7 @@ class Invaders:
         :param number_of_types:
         """
         self.canvas = canvas
+        self.game_data = game_data
         self.shoot = shoot
         self.divider = divider
         self.divider_cnt = 0
@@ -133,8 +134,9 @@ class Invaders:
         """
         explosion_items = self.canvas.find_withtag("explosion")
 
-        for item_e in explosion_items:
-            self.canvas.delete(item_e)
+        if self.divider_cnt % self.divider == 0:
+            for item_e in explosion_items:
+                self.canvas.delete(item_e)
 
     def hit_invader(self):
         """
@@ -143,6 +145,13 @@ class Invaders:
         """
         bullet_items = self.canvas.find_withtag("bullet")
         invader_items = self.canvas.find_withtag("invader")
+
+        for item_i in invader_items:
+            invader_x0, invader_y0, invader_x1, invader_y1 = self.canvas.bbox(item_i)
+
+            if invader_y1 >= (self.game_data.get_window_size()['HEIGHT'] - 35):
+                self.game_data.in_game = False
+                print("GAME OVER!")
 
         for item_b in bullet_items:
             bullet_x0, bullet_y0, bullet_x1, bullet_y1 = self.canvas.bbox(item_b)

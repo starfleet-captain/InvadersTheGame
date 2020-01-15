@@ -13,6 +13,7 @@ class GameStuff:
         self.current_level = 0
         self.window_size = dict()
         self.game_speed = 0
+        self.in_game = True
 
         self.read_configuration()
 
@@ -46,11 +47,11 @@ def main():
     print("Invaders - The Game")
     shoot = Shoot(game_canvas, 1)
     defender = Defender(game_canvas, game_data, shoot)
-    invaders = Invaders(game_canvas, shoot, 1, 3)
+    invaders = Invaders(game_canvas, game_data, shoot, 8, 3)
 
     invaders.set_invaders(number_of_invaders=5)
 
-    while 1:
+    while game_data.in_game:
         game_app.update_idletasks()
         game_app.update()
         defender.draw()
@@ -58,6 +59,12 @@ def main():
         invaders.manage_invaders()
         game_data.update_score(game_canvas, invaders.get_score(), invaders.get_level())
         time.sleep(0.02)
+
+    while 1:
+        game_app.update_idletasks()
+        game_app.update()
+        game_canvas.create_text(game_data.window_size['WIDTH'] / 2, 250, text="GAME OVER", font="Arial, 35",
+                                  fill="red", anchor=CENTER)
 
 
 if __name__ == '__main__':
