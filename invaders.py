@@ -121,8 +121,13 @@ class Invaders:
 
         # TODO: moving of invaders - depending on level
         # TODO: manage divider
-        current_draw = self.draw(self.move_invaders_down)
-        current_draw()
+        invader_items = self.canvas.find_withtag("invader")
+
+        if len(invader_items) > 0:
+            current_draw = self.draw(self.move_invaders_down)
+            current_draw()
+        else:
+            print("Ni ma!")
 
         if self.divider_cnt % self.divider == 0:
             self.divider_cnt = 0
