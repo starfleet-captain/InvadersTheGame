@@ -21,6 +21,7 @@ class Invaders:
         self.explosion_picture = None
         self.number_of_types = number_of_types
         self.number_of_invaders = None
+        self.level_completed = False
         self.score = 0
         self.level = 0
 
@@ -66,7 +67,7 @@ class Invaders:
         item_collision = True
 
         while item_collision:
-            position = random.randint(100, 600)
+            position = random.randint(50, 650)
             invader_x = position
             position = random.randint(10, 250)
             invader_y = position
@@ -119,15 +120,22 @@ class Invaders:
         """
         self.divider_cnt += 1
 
-        # TODO: moving of invaders - depending on level
-        # TODO: manage divider
-        invader_items = self.canvas.find_withtag("invader")
-
-        if len(invader_items) > 0:
-            current_draw = self.draw(self.move_invaders_down)
-            current_draw()
+        if self.level_completed:
+            self.level += 1
+            self.set_invaders(number_of_invaders=self.number_of_invaders + self.level)
+            self.level_completed = False
         else:
-            print("Ni ma!")
+            # TODO: moving of invaders - depending on level
+            # TODO: manage divider
+            invader_items = self.canvas.find_withtag("invader")
+
+            if len(invader_items) > 0:
+                current_draw = self.draw(self.move_invaders_down)
+                current_draw()
+            else:
+                # TODO: NEXT LEVEL
+                print("Ni ma!")
+                self.level_completed = True
 
         if self.divider_cnt % self.divider == 0:
             self.divider_cnt = 0

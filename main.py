@@ -47,7 +47,7 @@ def main():
     print("Invaders - The Game")
     shoot = Shoot(game_canvas, 1)
     defender = Defender(game_canvas, game_data, shoot)
-    invaders = Invaders(game_canvas, game_data, shoot, 8, 3)
+    invaders = Invaders(game_canvas, game_data, shoot, 8, 4)
 
     invaders.set_invaders(number_of_invaders=5)
 
