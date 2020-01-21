@@ -4,23 +4,30 @@ import random
 
 
 class Invaders:
-    def __init__(self, canvas, game_data, shoot, divider, number_of_types):
+    def __init__(self, canvas, game_data, shoot, divider, number_of_types_inv, number_of_types_boss):
         """
 
         :param canvas:
         :param shoot:
         :param divider:
-        :param number_of_types:
+        :param number_of_types_inv:
         """
         self.canvas = canvas
         self.game_data = game_data
         self.shoot = shoot
         self.divider = divider
         self.divider_cnt = 0
+        # Invaders
         self.invaders_pictures = list()
-        self.explosion_picture = None
-        self.number_of_types = number_of_types
+        self.number_of_types_inv = number_of_types_inv
         self.number_of_invaders = None
+
+        self.bosses_pictures = list()
+        self.number_of_types_boss = number_of_types_boss
+        self.number_of_boss_hit = None
+
+        self.explosion_picture = None
+        # Game stat
         self.level_completed = False
         self.score = 0
         self.level = 0
@@ -46,12 +53,18 @@ class Invaders:
 
         :return:
         """
-        item_list = [("inv_0" + str(x) + ".png") for x in range(1, self.number_of_types+1)]
+        item_list = [("inv_0" + str(x) + ".png") for x in range(1, self.number_of_types_inv + 1)]
         raw_image = None
 
         for item in item_list:
             raw_image = Image.open("./static/" + item)
             self.invaders_pictures.append(ImageTk.PhotoImage(raw_image))
+
+        item_list = [("boss_0" + str(x) + ".png") for x in range(1, self.number_of_types_boss + 1)]
+
+        for item in item_list:
+            raw_image = Image.open("./static/" + item)
+            self.bosses_pictures.append(ImageTk.PhotoImage(raw_image))
 
         raw_image = Image.open("./static/explosion.png")
         self.explosion_picture = ImageTk.PhotoImage(raw_image)
@@ -61,7 +74,7 @@ class Invaders:
 
         :return:
         """
-        new_invader_type = random.randint(0, self.number_of_types-1)
+        new_invader_type = random.randint(0, self.number_of_types_inv - 1)
         print(new_invader_type)
 
         item_collision = True
