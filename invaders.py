@@ -122,20 +122,22 @@ class Invaders:
 
         if self.level_completed:
             self.level += 1
-            self.set_invaders(number_of_invaders=self.number_of_invaders + self.level)
             self.level_completed = False
+
+            if self.level < 5:
+                self.set_invaders(number_of_invaders=self.number_of_invaders + self.level)
+
         else:
             # TODO: moving of invaders - depending on level
             # TODO: manage divider
-            invader_items = self.canvas.find_withtag("invader")
+            if self.level < 5:
+                invader_items = self.canvas.find_withtag("invader")
 
-            if len(invader_items) > 0:
-                current_draw = self.draw(self.move_invaders_down)
-                current_draw()
-            else:
-                # TODO: NEXT LEVEL
-                print("Ni ma!")
-                self.level_completed = True
+                if len(invader_items) > 0:
+                    current_draw = self.draw(self.move_invaders_down)
+                    current_draw()
+                else:
+                    self.level_completed = True
 
         if self.divider_cnt % self.divider == 0:
             self.divider_cnt = 0
@@ -180,6 +182,13 @@ class Invaders:
 
                         self.canvas.create_image(invader_x0, invader_y0, anchor=NW, image=self.explosion_picture,
                                                  tag="explosion")
+
+    def hit_boss(self):
+        """
+
+        :return:
+        """
+        pass
 
     def draw(self, moving_method):
         """
