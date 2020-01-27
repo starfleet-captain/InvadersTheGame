@@ -75,14 +75,12 @@ class Invaders:
         :return:
         """
         new_invader_type = random.randint(0, self.number_of_types_inv - 1)
-        print(new_invader_type)
-
         item_collision = True
 
         while item_collision:
             position = random.randint(50, 650)
             invader_x = position
-            position = random.randint(10, 250)
+            position = random.randint(10, 150)
             invader_y = position
 
             elements_overlap = self.canvas.find_overlapping(invader_x, invader_y, invader_x + 30, invader_y + 30)
@@ -92,8 +90,21 @@ class Invaders:
                                          image=self.invaders_pictures[new_invader_type], tag="invader")
                 item_collision = False
             else:
-                print("Wylosowano na innym obcym!")
                 item_collision = True
+
+    def locate_boss(self):
+        """
+
+        :return:
+        """
+        new_boss_type = random.randint(0, self.number_of_types_boss - 1)
+
+        position = random.randint(50, 600)
+        boss_x = position
+        position = random.randint(10, 200)
+        boss_y = position
+
+        self.canvas.create_image(boss_x, boss_y, anchor=NW, image=self.bosses_pictures[new_boss_type], tag="boss")
 
     def move_invaders_down(self):
         """
@@ -112,6 +123,28 @@ class Invaders:
         """
         pass
 
+    def move_boss(self):
+        boss_item = self.canvas.find_withtag("boss")
+
+        boss_x0, boss_y0, boss_x1, boss_y1 = self.canvas.bbox(boss_item)
+
+        # TODO: random direction, then random how much
+        move_x = random.randint(-3, 3)
+        # TODO: lambda below
+        move_y = random.randint(0, 50)
+
+        if boss_x1 + move_x < self.game_data.get_window_size()['WIDTH'] > boss_x0 + move_x > 0:
+            pass
+        else:
+            move_x = move_x * (-1)
+
+        if move_y > 10:
+            move_y = 1
+        else:
+            move_y = 0
+
+        self.canvas.move(boss_item, move_x, move_y)
+
     def set_invaders(self, number_of_invaders=None, level=None):
         """
 
@@ -124,36 +157,6 @@ class Invaders:
 
         for i in range(self.number_of_invaders):
             self.locate_invader()
-
-    def manage_invaders(self, level=None):
-        """
-
-        :param level:
-        :return:
-        """
-        self.divider_cnt += 1
-
-        if self.level_completed:
-            self.level += 1
-            self.level_completed = False
-
-            if self.level < 5:
-                self.set_invaders(number_of_invaders=self.number_of_invaders + self.level)
-
-        else:
-            # TODO: moving of invaders - depending on level
-            # TODO: manage divider
-            if self.level < 5:
-                invader_items = self.canvas.find_withtag("invader")
-
-                if len(invader_items) > 0:
-                    current_draw = self.draw(self.move_invaders_down)
-                    current_draw()
-                else:
-                    self.level_completed = True
-
-        if self.divider_cnt % self.divider == 0:
-            self.divider_cnt = 0
 
     def clear_explosion(self):
         """
@@ -201,17 +204,87 @@ class Invaders:
 
         :return:
         """
-        pass
+        bullet_items = self.canvas.find_withtag("bullet")
+        boss_item = self.canvas.find_withtag("boss")
 
-    def draw(self, moving_method):
+        boss_x0, boss_y0, boss_x1, boss_y1 = self.canvas.bbox(boss_item)
+
+        if boss_y1 >= (self.game_data.get_window_size()['HEIGHT'] - 35):
+            self.game_data.in_game = False
+            print("GAME OVER!")
+
+        for item_b in bullet_items:
+            bullet_x0, bullet_y0, bullet_x1, bullet_y1 = self.canvas.bbox(item_b)
+            elements_overlap = self.canvas.find_overlapping(bullet_x0, bullet_y0, bullet_x1, bullet_y1)
+
+            for overlap in elements_overlap:
+                if boss_item[0] == overlap:
+                    print("OVERLAP")
+                    if self.number_of_boss_hit == 1:
+                        self.canvas.delete(boss_item)
+                        self.canvas.delete(item_b)
+                        self.score += 10
+
+                        self.canvas.create_image(boss_x0, boss_y0, anchor=NW, image=self.explosion_picture, tag="explosion")
+                    else:
+                        self.canvas.delete(item_b)
+                        self.number_of_boss_hit -= 1
+                        print("HIT BOSS!")
+
+    def manage_invaders(self, level=None):
+        """
+
+        :param level:
+        :return:
+        """
+        self.divider_cnt += 1
+
+        if self.level_completed:
+            # TODO: modify that for higher levels
+            if self.level < 6:
+                self.level += 1
+                self.level_completed = False
+
+            if self.level < 5:
+                self.set_invaders(number_of_invaders=self.number_of_invaders + self.level)
+            elif self.level == 5:
+                self.locate_boss()
+                self.number_of_boss_hit = 40
+                print("ADDING BOSS")
+            elif self.level > 5:
+                print("END GAME")
+
+        else:
+            # TODO: moving of invaders - depending on level
+            # TODO: manage divider
+            if self.level < 5:
+                invader_items = self.canvas.find_withtag("invader")
+
+                if len(invader_items) > 0:
+                    current_draw = self.draw(self.move_invaders_down, self.hit_invader)
+                    current_draw()
+                else:
+                    self.level_completed = True
+            elif self.level == 5:
+                boss_item = self.canvas.find_withtag("boss")
+                if len(boss_item) > 0:
+                    current_draw = self.draw(self.move_boss, self.hit_boss)
+                    current_draw()
+                else:
+                    self.level_completed = True
+
+        if self.divider_cnt % self.divider == 0:
+            self.divider_cnt = 0
+
+    def draw(self, moving_method, hit_method):
         """
 
         :return:
         """
         self.clear_explosion()
-        self.hit_invader()
 
         def wrap_funct():
             moving_method()
+            hit_method()
 
         return wrap_funct
