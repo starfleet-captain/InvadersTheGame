@@ -128,20 +128,20 @@ class Invaders:
 
         boss_x0, boss_y0, boss_x1, boss_y1 = self.canvas.bbox(boss_item)
 
-        # TODO: random direction, then random how much
-        move_x = random.randint(-3, 3)
-        # TODO: lambda below
-        move_y = random.randint(0, 50)
+        calculate_y = lambda x: 1 if (x > 15) else 0
+
+        direction = random.randint(0, 1)
+        move_x = random.randint(0, 4)
+
+        if direction == 0:
+            move_x = move_x * (-1)
+
+        move_y = calculate_y(random.randint(0, 50))
 
         if boss_x1 + move_x < self.game_data.get_window_size()['WIDTH'] > boss_x0 + move_x > 0:
             pass
         else:
             move_x = move_x * (-1)
-
-        if move_y > 10:
-            move_y = 1
-        else:
-            move_y = 0
 
         self.canvas.move(boss_item, move_x, move_y)
 
@@ -241,6 +241,7 @@ class Invaders:
 
         if self.level_completed:
             # TODO: modify that for higher levels
+            # TODO: add animatio between levels
             if self.level < 6:
                 self.level += 1
                 self.level_completed = False
