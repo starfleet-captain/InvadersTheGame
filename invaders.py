@@ -241,7 +241,7 @@ class Invaders:
 
         if self.level_completed:
             # TODO: modify that for higher levels
-            # TODO: add animatio between levels
+            # TODO: add animation between levels
             if self.level < 6:
                 self.level += 1
                 self.level_completed = False
