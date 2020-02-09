@@ -1,10 +1,10 @@
 from tkinter import *
 from PIL import ImageTk, Image
 import random
-
+import time
 
 class Invaders:
-    def __init__(self, canvas, game_data, shoot, divider, number_of_types_inv, number_of_types_boss):
+    def __init__(self, canvas, game_data, shoot, addons, defender, divider, number_of_types_inv, number_of_types_boss):
         """
 
         :param canvas:
@@ -15,6 +15,7 @@ class Invaders:
         self.canvas = canvas
         self.game_data = game_data
         self.shoot = shoot
+        self.defender = defender
         self.divider = divider
         self.divider_cnt = 0
         # Invaders
@@ -33,6 +34,8 @@ class Invaders:
         self.level = 0
 
         self.load_graphics()
+
+        self.star_animation = addons
 
     def get_score(self):
         """
@@ -124,6 +127,10 @@ class Invaders:
         pass
 
     def move_boss(self):
+        """
+
+        :return:
+        """
         boss_item = self.canvas.find_withtag("boss")
 
         boss_x0, boss_y0, boss_x1, boss_y1 = self.canvas.bbox(boss_item)
@@ -219,17 +226,15 @@ class Invaders:
 
             for overlap in elements_overlap:
                 if boss_item[0] == overlap:
-                    print("OVERLAP")
                     if self.number_of_boss_hit == 1:
                         self.canvas.delete(boss_item)
                         self.canvas.delete(item_b)
                         self.score += 10
-
-                        self.canvas.create_image(boss_x0, boss_y0, anchor=NW, image=self.explosion_picture, tag="explosion")
+                        self.canvas.create_image(boss_x0, boss_y0, anchor=NW, image=self.explosion_picture,
+                                                 tag="explosion")
                     else:
                         self.canvas.delete(item_b)
                         self.number_of_boss_hit -= 1
-                        print("HIT BOSS!")
 
     def manage_invaders(self, level=None):
         """
@@ -239,7 +244,7 @@ class Invaders:
         """
         self.divider_cnt += 1
 
-        if self.level_completed:
+        if self.level_completed and self.star_animation.get_animation_status():
             # TODO: modify that for higher levels
             # TODO: add animation between levels
             if self.level < 6:
@@ -249,13 +254,13 @@ class Invaders:
             if self.level < 5:
                 self.set_invaders(number_of_invaders=self.number_of_invaders + self.level)
             elif self.level == 5:
+                self.defender.bind_keys()
                 self.locate_boss()
                 self.number_of_boss_hit = 40
-                print("ADDING BOSS")
             elif self.level > 5:
                 print("END GAME")
 
-        else:
+        elif not self.level_completed:
             # TODO: moving of invaders - depending on level
             # TODO: manage divider
             if self.level < 5:
@@ -265,7 +270,17 @@ class Invaders:
                     current_draw = self.draw(self.move_invaders_down, self.hit_invader)
                     current_draw()
                 else:
+
                     self.level_completed = True
+
+                    if self.level == 4:
+                        self.defender.stop_defenter(None)
+                        self.defender.unbind_keys()
+                        position = self.defender.get_position()
+                        self.star_animation.locate_stars(20, position)
+                        self.star_animation.start_animation()
+                        # TODO: clear las explosion
+                        self.clear_explosion()
             elif self.level == 5:
                 boss_item = self.canvas.find_withtag("boss")
                 if len(boss_item) > 0:

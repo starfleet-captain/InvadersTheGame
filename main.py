@@ -6,6 +6,7 @@ import time
 from defender import Defender
 from shoot import Shoot
 from invaders import Invaders
+from addons import StarTrip
 
 
 class GameStuff:
@@ -46,8 +47,9 @@ def main():
 
     print("Invaders - The Game")
     shoot = Shoot(game_canvas, 1)
+    star_animation = StarTrip(game_canvas, 1)
     defender = Defender(game_canvas, game_data, shoot)
-    invaders = Invaders(game_canvas, game_data, shoot, 8, 4, 1)
+    invaders = Invaders(game_canvas, game_data, shoot, star_animation, defender, 8, 4, 1)
 
     invaders.set_invaders(number_of_invaders=5)
 
@@ -57,6 +59,9 @@ def main():
         defender.draw()
         shoot.draw()
         invaders.manage_invaders()
+        game_app.update()
+        game_app.update_idletasks()
+        star_animation.manage_animation()
         game_data.update_score(game_canvas, invaders.get_score(), invaders.get_level())
         time.sleep(0.02)
 

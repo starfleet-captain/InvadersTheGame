@@ -14,6 +14,13 @@ class Shoot:
         self.divider_cnt = 0
         self.bullets = list()
 
+    def get_bullets_number(self):
+        """
+        Returns number of bullets.
+        :return:
+        """
+        return len(self.bullets)
+
     def trigger_shoot(self, def_coords):
         """
 
